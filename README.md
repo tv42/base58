@@ -8,4 +8,4 @@ The encoded data contains only alphanumericals, and avoids the easily
 confused characters 0, i, l and O (zero, india, lima, capital oscar).
 
 The API docs for this package are online at
-http://go.pkgdoc.org/github.com/tv42/base58
+http://godoc.org/github.com/tv42/base58
