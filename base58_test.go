@@ -1,6 +1,7 @@
 package base58
 
 import (
+	"fmt"
 	"math/big"
 	"testing"
 )
@@ -14,6 +15,24 @@ var pairs = []testpair{
 	{10002343, "Tgmc"},
 	{1000, "if"},
 	{0, ""},
+}
+
+func ExampleEncodeBig() {
+	buf := EncodeBig(nil, big.NewInt(123456))
+	fmt.Printf("%s\n", buf)
+	// Output:
+	// CGy
+}
+
+func ExampleDecodeToBig() {
+	n, err := DecodeToBig([]byte("CGy"))
+	if err != nil {
+		fmt.Println("error:", err)
+		return
+	}
+	fmt.Printf("%d\n", n)
+	// Output:
+	// 123456
 }
 
 func TestEncode(t *testing.T) {
