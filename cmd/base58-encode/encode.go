@@ -11,13 +11,13 @@ import (
 func main() {
 	flag.Parse()
 	for _, dec := range flag.Args() {
-		n := new(big.Int)
-		_, err := fmt.Sscan(dec, n)
+		num := new(big.Int)
+		_, err := fmt.Sscan(dec, num)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		buf := base58.EncodeBig(nil, n)
+		buf := base58.EncodeBig(nil, num)
 		_, err = fmt.Printf("%s\n", buf)
 		if err != nil {
 			log.Fatal(err)
