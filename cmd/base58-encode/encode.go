@@ -13,14 +13,12 @@ func main() {
 	flag.Parse()
 	for _, dec := range flag.Args() {
 		num := new(big.Int)
-		_, err := fmt.Sscan(dec, num)
-		if err != nil {
-			log.Fatal(err)
+		if _, ok := num.SetString(dec, 10); !ok {
+			log.Fatalf("not a number: %s", dec)
 		}
 
 		buf := base58.EncodeBig(nil, num)
-		_, err = fmt.Printf("%s\n", buf)
-		if err != nil {
+		if _, err := fmt.Printf("%s\n", buf); err != nil {
 			log.Fatal(err)
 		}
 	}
