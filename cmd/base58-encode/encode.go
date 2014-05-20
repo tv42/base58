@@ -1,11 +1,12 @@
 package main
 
 import (
-	"math/big"
 	"flag"
 	"fmt"
-	"github.com/tv42/base58"
 	"log"
+	"math/big"
+
+	"github.com/tv42/base58"
 )
 
 func main() {

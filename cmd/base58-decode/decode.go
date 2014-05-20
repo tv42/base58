@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/tv42/base58"
 	"log"
+
+	"github.com/tv42/base58"
 )
 
 func main() {
