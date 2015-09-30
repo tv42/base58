@@ -10,7 +10,8 @@ import (
 	"strconv"
 )
 
-const alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
+//const alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
+const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
 var decodeMap [256]byte
 
@@ -64,4 +65,17 @@ func EncodeBig(dst []byte, src *big.Int) []byte {
 		dst[i], dst[j] = dst[j], dst[i]
 	}
 	return dst
+}
+
+func b58Encode(data []byte) []byte {
+  bigInt := big.NewInt(0).SetBytes(data)
+  return EncodeBig(nil, bigInt)
+}
+
+func b58Decode(enc []byte) ([]byte, error) {
+  bigInt, err := DecodeToBig(enc)
+  if err != nil {
+    return nil, err
+  }
+  return bigInt.Bytes(), nil
 }
