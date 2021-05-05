@@ -4,9 +4,14 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/cmars/basen"
 	"github.com/tv42/base58"
 )
+
+func encode(data []byte) []byte {
+	var n big.Int
+	n.SetBytes(data)
+	return base58.EncodeBig(nil, &n)
+}
 
 // These benchmarks mirror the ones in encoding/base64, and results
 // should be comparable to those.
@@ -27,7 +32,7 @@ func BenchmarkBase58EncodeToString(b *testing.B) {
 func BenchmarkBase58DecodeString(b *testing.B) {
 	data := make([]byte, 8192)
 	data[0] = 0xff // without this, it's just an inefficient zero
-	data = []byte(basen.Base58.EncodeToString(data))
+	data = encode(data)
 	b.SetBytes(int64(len(data)))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -54,7 +59,7 @@ func BenchmarkBase58EncodeToStringSmall(b *testing.B) {
 func BenchmarkBase58DecodeStringSmall(b *testing.B) {
 	data := make([]byte, 8)
 	data[0] = 0xff // without this, it's just an inefficient zero
-	data = []byte(basen.Base58.EncodeToString(data))
+	data = encode(data)
 	b.SetBytes(int64(len(data)))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
