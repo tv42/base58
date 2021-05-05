@@ -40,8 +40,8 @@ func (e CorruptInputError) Error() string {
 // input.
 func DecodeToBig(src []byte) (*big.Int, error) {
 	n := new(big.Int)
-	for i := 0; i < len(src); i++ {
-		b := decodeMap[src[i]]
+	for i, c := range src {
+		b := decodeMap[c]
 		if b == 0xFF {
 			return nil, CorruptInputError(i)
 		}
