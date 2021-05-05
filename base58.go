@@ -14,6 +14,13 @@ const alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
 
 var decodeMap [256]byte
 
+var (
+	// constant-like variables
+
+	radix = big.NewInt(58)
+	zero  = big.NewInt(0)
+)
+
 func init() {
 	for i := 0; i < len(decodeMap); i++ {
 		decodeMap[i] = 0xFF
@@ -33,7 +40,6 @@ func (e CorruptInputError) Error() string {
 // input.
 func DecodeToBig(src []byte) (*big.Int, error) {
 	n := new(big.Int)
-	radix := big.NewInt(58)
 	for i := 0; i < len(src); i++ {
 		b := decodeMap[src[i]]
 		if b == 0xFF {
@@ -51,8 +57,6 @@ func EncodeBig(dst []byte, src *big.Int) []byte {
 	start := len(dst)
 	n := new(big.Int)
 	n.Set(src)
-	radix := big.NewInt(58)
-	zero := big.NewInt(0)
 
 	for n.Cmp(zero) > 0 {
 		mod := new(big.Int)
