@@ -12,7 +12,7 @@ import (
 
 const alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
 
-var decodeMap [256]byte
+var decodeMap [256]*big.Int
 
 var (
 	// constant-like variables
@@ -22,11 +22,8 @@ var (
 )
 
 func init() {
-	for i := 0; i < len(decodeMap); i++ {
-		decodeMap[i] = 0xFF
-	}
 	for i := 0; i < len(alphabet); i++ {
-		decodeMap[alphabet[i]] = byte(i)
+		decodeMap[alphabet[i]] = big.NewInt(int64(i))
 	}
 }
 
@@ -42,11 +39,11 @@ func DecodeToBig(src []byte) (*big.Int, error) {
 	n := new(big.Int)
 	for i, c := range src {
 		b := decodeMap[c]
-		if b == 0xFF {
+		if b == nil {
 			return nil, CorruptInputError(i)
 		}
 		n.Mul(n, radix)
-		n.Add(n, big.NewInt(int64(b)))
+		n.Add(n, b)
 	}
 	return n, nil
 }
