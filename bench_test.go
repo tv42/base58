@@ -5,64 +5,51 @@ import (
 	"testing"
 
 	"github.com/tv42/base58"
+	"strconv"
 )
 
-func encode(data []byte) []byte {
-	var n big.Int
-	n.SetBytes(data)
-	return base58.EncodeBig(nil, &n)
-}
-
-// These benchmarks mirror the ones in encoding/base64, and results
-// should be comparable to those.
-
-func BenchmarkBase58EncodeToString(b *testing.B) {
-	data := make([]byte, 8192)
+func fixedBigInt(numBytes int) *big.Int {
+	data := make([]byte, numBytes)
 	data[0] = 0xff // without this, it's just an inefficient zero
-	b.SetBytes(int64(len(data)))
-	var num big.Int
+	num := new(big.Int)
 	num.SetBytes(data)
-	buf := make([]byte, 12000)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		base58.EncodeBig(buf[:0], &num)
-	}
+	return num
 }
 
-func BenchmarkBase58DecodeString(b *testing.B) {
-	data := make([]byte, 8192)
-	data[0] = 0xff // without this, it's just an inefficient zero
-	data = encode(data)
-	b.SetBytes(int64(len(data)))
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		base58.DecodeToBig(data)
+// 8192-byte benchmarks mirror the ones in encoding/base64, and
+// results should be comparable to those.
+//
+// 8-byte benchmarks are more like the uses that this library was
+// meant for: smallish identifiers.
+
+func BenchmarkEncode(b *testing.B) {
+	run := func(numBytes int) {
+		b.Run(strconv.Itoa(numBytes), func(b *testing.B) {
+			num := fixedBigInt(numBytes)
+			b.SetBytes(int64(len(num.Bytes())))
+			buf := make([]byte, 12000)
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				_ = base58.EncodeBig(buf[:0], num)
+			}
+		})
 	}
+	run(8)
+	run(8192)
 }
 
-// These benchmarks are more like the uses that this library was meant
-// for: smallish identifiers.
-
-func BenchmarkBase58EncodeToStringSmall(b *testing.B) {
-	data := make([]byte, 8)
-	data[0] = 0xff // without this, it's just an inefficient zero
-	b.SetBytes(int64(len(data)))
-	var num big.Int
-	num.SetBytes(data)
-	buf := make([]byte, 12000)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		base58.EncodeBig(buf[:0], &num)
+func BenchmarkBase58Decode(b *testing.B) {
+	run := func(numBytes int) {
+		b.Run(strconv.Itoa(numBytes), func(b *testing.B) {
+			num := fixedBigInt(numBytes)
+			encoded := base58.EncodeBig(nil, num)
+			b.SetBytes(int64(len(encoded)))
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				_, _ = base58.DecodeToBig(encoded)
+			}
+		})
 	}
-}
-
-func BenchmarkBase58DecodeStringSmall(b *testing.B) {
-	data := make([]byte, 8)
-	data[0] = 0xff // without this, it's just an inefficient zero
-	data = encode(data)
-	b.SetBytes(int64(len(data)))
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		base58.DecodeToBig(data)
-	}
+	run(8)
+	run(8192)
 }
